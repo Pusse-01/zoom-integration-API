@@ -57,6 +57,11 @@ def get_meetings(client):
         return (json.loads(meetings))
 
 
+@app.route("/")
+def home_view():
+    return "<h1>Zoom Integration - POC</h1>"
+
+
 @app.route('/createmeeting', methods=['POST'])
 def new_meetings():
     data = json.loads(request.data)
