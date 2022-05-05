@@ -33,7 +33,7 @@ def generateToken(API_KEY, API_SEC):
 
 
 def createMeeting(meetingdetails, API_KEY, API_SEC):
-    headers = {'authorization': 'Bearer ' + generateToken(API_KEY, API_SEC),
+    headers = {'authorization': 'Bearer ' + str(generateToken(API_KEY, API_SEC)),
                'content-type': 'application/json'}
     r = requests.post(
         f'https://api.zoom.us/v2/users/me/meetings',
@@ -111,4 +111,4 @@ def getMeetings():
     return jsonify(meetings[0]['id'])
 
 
-app.run()
+app.run(host="0.0.0.0", port=5000)
