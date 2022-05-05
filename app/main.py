@@ -101,7 +101,7 @@ def new_meetings():
 @app.route('/get_meetings', methods=['GET'])
 def getMeetings():
     headers = {
-        'authorization': 'Bearer ' + generateToken(API_KEY, API_SEC),
+        'authorization': 'Bearer ' + str(generateToken(API_KEY, API_SEC)),
         'content-type': 'application/json'
     }
     meetings = requests.get(
@@ -111,4 +111,4 @@ def getMeetings():
     return jsonify(meetings[0]['id'])
 
 
-app.run(host="0.0.0.0", port=5000)
+app.run()
