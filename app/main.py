@@ -111,4 +111,4 @@ def getMeetings():
     return jsonify(meetings[0]['id'])
 
 
-app.run()
+app.run(host="0.0.0.0", port=5000)
