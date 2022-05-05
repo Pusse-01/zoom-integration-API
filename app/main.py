@@ -1,18 +1,16 @@
 import flask
 import jwt
 import requests
-from zoomus import ZoomClient
 import json
 from flask import jsonify, request
 from time import time
 
 app = flask.Flask(__name__)
-app.config["DEBUG"] = True
 
 
 # Enter your API key and your API secret
-API_KEY = 'pnnUcpQSS4-aV1pPrFi9Ng'
-API_SEC = 'hnZYNbmowkIs039SJE3MKx6umc4p29YxbA6H'
+API_KEY = 'bPOPqXuiTwqm6VouS_5MeA'
+API_SEC = 'BOiLu93CiMPv3mV3dkopmc07aj16uzgTCMNT'
 
 # connect to Zoom Client
 client = ZoomClient(API_KEY, API_SEC)
@@ -48,13 +46,21 @@ def createMeeting(meetingdetails, API_KEY, API_SEC):
     return r
 
 
-def get_meetings(client):
-    # Find if Meeting got created
-    user_list = json.loads(client.user.list().content)
-    for user in user_list['users']:
-        user_id = user['id']
-        meetings = client.meeting.list(user_id=user_id).content
-        return (json.loads(meetings))
+def get_meetings():
+#     # Find if Meeting got created
+#     user_list = json.loads(client.user.list().content)
+#     for user in user_list['users']:
+#         user_id = user['id']
+#         meetings = client.meeting.list(user_id=user_id).content
+#         return (json.loads(meetings))
+        headers = {
+            'authorization': 'Bearer ' + generateToken(API_KEY, API_SEC),
+            'content-type': 'application/json'
+        }
+        meetings = requests.get('https://api.zoom.us/v2/users/me/meetings', headers=headers)
+        meetings = json.loads(meetings.text)['meetings']
+
+        return [meeting for meeting in meetings if meeting['start_time'].split("-")[1] == '05']
 
 
 @app.route("/")
@@ -101,9 +107,7 @@ def new_meetings():
 
 @app.route('/get_meetings', methods=['GET'])
 def getMeetings():
-    meetings = get_meetings(client)
-    print(meetings['meetings'][0]['id'])
-    return jsonify(meetings['meetings'][0]['id'])
+    return get_meetings()
 
 
 app.run()
