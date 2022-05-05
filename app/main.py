@@ -106,6 +106,7 @@ def getMeetings():
     }
     meetings = requests.get(
         'https://api.zoom.us/v2/users/me/meetings', headers=headers)
+    print(json.loads(meetings.text))
     meetings = json.loads(meetings.text)['meetings']
 
     return jsonify(meetings[0]['id'])
