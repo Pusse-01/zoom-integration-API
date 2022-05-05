@@ -13,7 +13,7 @@ API_KEY = 'bPOPqXuiTwqm6VouS_5MeA'
 API_SEC = 'BOiLu93CiMPv3mV3dkopmc07aj16uzgTCMNT'
 
 # connect to Zoom Client
-client = ZoomClient(API_KEY, API_SEC)
+# client = ZoomClient(API_KEY, API_SEC)
 
 
 def generateToken(API_KEY, API_SEC):
@@ -47,12 +47,12 @@ def createMeeting(meetingdetails, API_KEY, API_SEC):
 
 
 def get_meetings():
-#     # Find if Meeting got created
-#     user_list = json.loads(client.user.list().content)
-#     for user in user_list['users']:
-#         user_id = user['id']
-#         meetings = client.meeting.list(user_id=user_id).content
-#         return (json.loads(meetings))
+    #     # Find if Meeting got created
+    #     user_list = json.loads(client.user.list().content)
+    #     for user in user_list['users']:
+    #         user_id = user['id']
+    #         meetings = client.meeting.list(user_id=user_id).content
+    #         return (json.loads(meetings))
     pass
 
 
@@ -100,14 +100,15 @@ def new_meetings():
 
 @app.route('/get_meetings', methods=['GET'])
 def getMeetings():
-        headers = {
+    headers = {
         'authorization': 'Bearer ' + generateToken(API_KEY, API_SEC),
         'content-type': 'application/json'
     }
-    meetings = requests.get('https://api.zoom.us/v2/users/me/meetings', headers=headers)
+    meetings = requests.get(
+        'https://api.zoom.us/v2/users/me/meetings', headers=headers)
     meetings = json.loads(meetings.text)['meetings']
 
-    return meetings[0]['id']
+    return jsonify(meetings[0]['id'])
 
 
 app.run()
