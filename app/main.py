@@ -53,14 +53,7 @@ def get_meetings():
 #         user_id = user['id']
 #         meetings = client.meeting.list(user_id=user_id).content
 #         return (json.loads(meetings))
-        headers = {
-            'authorization': 'Bearer ' + generateToken(API_KEY, API_SEC),
-            'content-type': 'application/json'
-        }
-        meetings = requests.get('https://api.zoom.us/v2/users/me/meetings', headers=headers)
-        meetings = json.loads(meetings.text)['meetings']
-
-        return [meeting for meeting in meetings if meeting['start_time'].split("-")[1] == '05']
+    pass
 
 
 @app.route("/")
@@ -107,7 +100,14 @@ def new_meetings():
 
 @app.route('/get_meetings', methods=['GET'])
 def getMeetings():
-    return get_meetings()
+        headers = {
+        'authorization': 'Bearer ' + generateToken(API_KEY, API_SEC),
+        'content-type': 'application/json'
+    }
+    meetings = requests.get('https://api.zoom.us/v2/users/me/meetings', headers=headers)
+    meetings = json.loads(meetings.text)['meetings']
+
+    return meetings[0]['id']
 
 
 app.run()
