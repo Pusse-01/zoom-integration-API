@@ -1,4 +1,5 @@
 import flask
+from flask_cors import CORS, cross_origin
 import jwt
 import requests
 import json
@@ -6,7 +7,8 @@ from flask import jsonify, request
 from time import time
 
 app = flask.Flask(__name__)
-
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 # Enter your API key and your API secret
 API_KEY = 'bPOPqXuiTwqm6VouS_5MeA'
@@ -58,8 +60,12 @@ def get_meetings():
 
 
 @app.route("/")
+@cross_origin()
 def home_view():
-    return "<h1>Zoom Integration - POC</h1>"
+    response = "<h1>Zoom Integration - POC</h1>"
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    
+    return response
 
 
 @app.route('/createmeeting', methods=['POST'])
@@ -100,6 +106,7 @@ def new_meetings():
 
 
 @app.route('/get_meetings', methods=['GET'])
+@cross_origin()
 def getMeetings():
     headers = {
         'authorization': 'Bearer ' + generateToken(API_KEY, API_SEC),
@@ -110,7 +117,11 @@ def getMeetings():
     # print(json.loads(meetings.text))
     meetings = json.loads(meetings.text)['meetings']
     meetings = [meeting for meeting in meetings if meeting['start_time'].split("-")[1] == '05']
-    return jsonify(meetings[0]['id'])
+    
+    response = jsonify(meetings[0]['id'])
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    
+    return response
 
 
 app.run(host="0.0.0.0", port=5000)
