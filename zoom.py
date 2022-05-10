@@ -60,10 +60,11 @@ class ZOOM_CLIENT():
             "topic": topic,
             "type": 2
         }
-
-        return requests.post(self.BASE_URL + 'users/me/meetings'
+        a = requests.post(self.BASE_URL + 'users/me/meetings'
             , headers=self.headers, data=json.dumps(payload)
         )
+        print(a)
+        return a
 
     def list_meetings(self):
         meetings = requests.get(self.BASE_URL + 'users/me/meetings', headers=self.headers)
