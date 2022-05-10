@@ -37,7 +37,6 @@ class ZOOM_CLIENT():
             "agenda": agenda,
             "duration": 30,
             "password": "123456",
-            "schedule_for": "dinesh@sp-solutiobs.biz",
             "settings": {
                 "approval_type": 2,
                 "audio": "both",
@@ -60,11 +59,16 @@ class ZOOM_CLIENT():
             "topic": topic,
             "type": 2
         }
-        a = requests.post(self.BASE_URL + 'users/me/meetings'
+        _meeting = json.loads(requests.post(self.BASE_URL + 'users/me/meetings'
             , headers=self.headers, data=json.dumps(payload)
-        )
-        print(a)
-        return a
+        ).text)
+        
+        return {
+            "id": _meeting["id"],
+            "topic": _meeting["topic"],
+            "start_time": _meeting["start_time"].split("T")[0] + " " + _meeting["start_time"].split("T")[1][:5],
+            "join_url": _meeting["join_url"]
+        }
 
     def list_meetings(self):
         meetings = requests.get(self.BASE_URL + 'users/me/meetings', headers=self.headers)

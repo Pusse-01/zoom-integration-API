@@ -16,7 +16,6 @@ _zoom = ZOOM_CLIENT()
 @cross_origin()
 def root():
     response = make_response("<h1>Zoom Integration - POC</h1>")
-    response.headers.add("Access-Control-Allow-Origin", "*")
 
     return response
 
@@ -25,18 +24,10 @@ def root():
 @cross_origin()
 def create_meeting():
     data = json.loads(request.data)
-    data = {
-            "topic": "test ",
-            "agenda": "test",
-            "invitees": "rahalamrith@gmail.com",
-            "start_date": "2022-05-11",
-            "start_time": "20:44:00"
-        }
-
     start_time = str(data["start_date"])+"T"+str(data["start_time"])
-    d = _zoom.create_meeting(data["topic"], data["agenda"], start_time, data["invitees"])
-    print(d)
-    return d
+    response = make_response(_zoom.create_meeting(data["topic"], data["agenda"], start_time, data["invitees"]))
+
+    return response
 
 
 @app.route('/listMeeting', methods=['GET'])
@@ -48,8 +39,6 @@ def list_meeting():
         "start_time": _meeting["start_time"].split("T")[0] + " " + _meeting["start_time"].split("T")[1][:5],
         "join_url": _meeting["join_url"]
     })
-    
-    response.headers.add("Access-Control-Allow-Origin", "*")
 
     return response
 
@@ -58,7 +47,6 @@ def list_meeting():
 @cross_origin()
 def get_meeting():
     response = make_response(jsonify(_zoom.list_meetings()["id"]))
-    response.headers.add("Access-Control-Allow-Origin", "*")
     
     return response
 
