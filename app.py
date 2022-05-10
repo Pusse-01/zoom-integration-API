@@ -46,7 +46,11 @@ def list_meeting():
 @app.route('/getMeeting', methods=['GET'])
 @cross_origin()
 def get_meeting():
-    response = make_response(jsonify(_zoom.list_meetings()["id"]))
+    _meeting = _zoom.list_meetings()
+    response = make_response({
+        "id": _meeting["id"],
+        "join_url": _meeting["join_url"]
+    })
     
     return response
 
