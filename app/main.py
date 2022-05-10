@@ -100,6 +100,8 @@ def new_meetings():
     # res = {join_URL, meetingPassword}
     return jsonify(y)
 
+def sortMeetingList(_meeting):
+  return _meeting['start_time']
 
 @app.route('/get_meetings', methods=['GET'])
 def getMeetings():
@@ -111,7 +113,8 @@ def getMeetings():
         'https://api.zoom.us/v2/users/me/meetings', headers=headers)
     # print(json.loads(meetings.text))
     meetings = json.loads(meetings.text)['meetings']
-    meetings = [meeting for meeting in meetings if meeting['start_time'].split("-")[1] == '05']
+    meetings = [meeting for meeting in meetings if (meeting['start_time'].split("-")[1] == '05' or meeting['start_time'].split("-")[1] == '06')]
+    meetings = meetings.sort(reverse=True, key=sortMeetingList)
     
     response = jsonify(meetings[0]['id'])
     response.headers.add("Access-Control-Allow-Origin", "*")
