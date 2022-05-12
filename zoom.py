@@ -7,22 +7,22 @@ from datetime import datetime
 class ZOOM_CLIENT():
 
     def __init__(self) -> None:
-        self.API_KEY = 'yoLTrtJESImvz06ruIbV4g'
-        self.API_SECRET = 'k6VuQUeP3ylVxqJ99NfbLJjLqhJUtqiVBo9Y'
-        self.BASE_URL = 'https://api.zoom.us/v2/'
+        self.API_KEY = "yoLTrtJESImvz06ruIbV4g"
+        self.API_SECRET = "k6VuQUeP3ylVxqJ99NfbLJjLqhJUtqiVBo9Y"
+        self.BASE_URL = "https://api.zoom.us/v2/"
         self.headers = {
-            'authorization': 'Bearer ' + self.__generate_token(),
-            'content-type': 'application/json'
+            "authorization": "Bearer " + self.__generate_token(),
+            "content-type": "application/json"
         }
 
     def __generate_token(self):
         token = jwt.encode(
             # API Key & expiration time
-            {'iss': self.API_KEY, 'exp': time() + 5000},
+            {"iss": self.API_KEY, "exp": time() + 5000},
             # Secret used to generate token signature
             self.API_SECRET,
             # Specify the hashing alg
-            algorithm = 'HS256'
+            algorithm = "HS256"
         )
         return token
 
@@ -59,7 +59,7 @@ class ZOOM_CLIENT():
             "topic": topic,
             "type": 2
         }
-        _meeting = json.loads(requests.post(self.BASE_URL + 'users/me/meetings'
+        _meeting = json.loads(requests.post(self.BASE_URL + "users/me/meetings"
             , headers=self.headers, data=json.dumps(payload)
         ).text)
         
@@ -71,7 +71,8 @@ class ZOOM_CLIENT():
         }
 
     def list_meetings(self):
-        meetings = requests.get(self.BASE_URL + 'users/me/meetings', headers=self.headers)
-        meetings = json.loads(meetings.text)['meetings']
+        meetings = requests.get(self.BASE_URL + "users/me/meetings", headers=self.headers)
+        meetings = json.loads(meetings.text)["meetings"]
+        meetings.sort(key=lambda m: datetime.strptime(m["created_at"], "%Y-%m-%dT%H:%M:%SZ"), reverse=True)
 
         return meetings[0]
