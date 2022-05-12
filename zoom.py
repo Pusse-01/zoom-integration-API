@@ -10,13 +10,10 @@ class ZOOM_CLIENT():
         self.API_KEY = "yoLTrtJESImvz06ruIbV4g"
         self.API_SECRET = "k6VuQUeP3ylVxqJ99NfbLJjLqhJUtqiVBo9Y"
         self.BASE_URL = "https://api.zoom.us/v2/"
-        self.headers = {
-            "authorization": "Bearer " + self.__generate_token(),
-            "content-type": "application/json"
-        }
+        self.headers = self.__get_headers()
 
-    def __generate_token(self):
-        token = jwt.encode(
+    def __get_headers(self):
+        _token = token = jwt.encode(
             # API Key & expiration time
             {"iss": self.API_KEY, "exp": time() + 5000},
             # Secret used to generate token signature
@@ -24,7 +21,11 @@ class ZOOM_CLIENT():
             # Specify the hashing alg
             algorithm = "HS256"
         )
-        return token
+
+        return {
+            "authorization": "Bearer " + _token,
+            "content-type": "application/json"
+        }
 
     def create_meeting(self, topic, agenda, start_time, invitees):
         _invitees, _emails = [], invitees.split(";")
@@ -60,7 +61,7 @@ class ZOOM_CLIENT():
             "type": 2
         }
         _meeting = json.loads(requests.post(self.BASE_URL + "users/me/meetings"
-            , headers=self.headers, data=json.dumps(payload)
+            , headers=self.__get_headers(), data=json.dumps(payload)
         ).text)
         
         return {
@@ -71,7 +72,7 @@ class ZOOM_CLIENT():
         }
 
     def list_meetings(self):
-        meetings = requests.get(self.BASE_URL + "users/me/meetings", headers=self.headers)
+        meetings = requests.get(self.BASE_URL + "users/me/meetings", headers=self.__get_headers())
         meetings = json.loads(meetings.text)["meetings"]
         meetings.sort(key=lambda m: datetime.strptime(m["created_at"], "%Y-%m-%dT%H:%M:%SZ"), reverse=True)
 
