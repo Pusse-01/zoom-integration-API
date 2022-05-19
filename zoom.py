@@ -2,7 +2,7 @@ import jwt
 from time import time
 import json
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class ZOOM_CLIENT():
 
@@ -64,10 +64,12 @@ class ZOOM_CLIENT():
             , headers=self.__get_headers(), data=json.dumps(payload)
         ).text)
         
+        _time = (datetime.strptime(_meeting["start_time"], "%Y-%m-%dT%H:%M:%SZ") + timedelta(hours=5, minutes=30)).strftime("%Y-%m-%dT%H:%M:%SZ")
+
         return {
             "id": _meeting["id"],
             "topic": _meeting["topic"],
-            "start_time": _meeting["start_time"].split("T")[0] + " " + _meeting["start_time"].split("T")[1][:5],
+            "start_time": _time.split("T")[0] + " " + _time.split("T")[1][:5],
             "join_url": _meeting["join_url"]
         }
 
